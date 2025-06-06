@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
-import { Dancing_Script, Red_Hat_Text } from "next/font/google";
+import { Header } from "@/components/layout/Header";
 import "./globals.css";
-
-const dancingScript = Dancing_Script({
-  variable: "--font-dancing-script",
-  subsets: ["latin"],
-});
-
-const redHatText = Red_Hat_Text({
-  variable: "--font-red-hat-text",
-  subsets: ["latin"],
-});
+import { dancingScript, redHatText } from "@/ui/fonts";
 
 export const metadata: Metadata = {
   title: "ChefHub",
@@ -27,6 +18,7 @@ export default function RootLayout({
       <body
         className={`${dancingScript.variable} ${redHatText.variable} ${redHatText.className} antialiased`}
       >
+        <Header />
         {children}
       </body>
     </html>
