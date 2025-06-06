@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Recipe, RecipeIngredient } from '@/types/recipe';
-import Image from 'next/image';
 import { 
   IconClock, 
   IconUsers, 
@@ -182,11 +181,10 @@ export function RecipeDetailClient({ recipeId }: RecipeDetailClientProps) {
               </p>              {/* Chef info */}
               <div className="flex items-center mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
-                  <Image
+                  <img
                     src={recipe.chef.avatar}
                     alt={recipe.chef.name}
-                    fill
-                    className="object-cover"
+                    className="object-cover size-full"
                   />
                 </div>
                 <div>
