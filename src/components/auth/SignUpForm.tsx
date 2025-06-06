@@ -4,8 +4,10 @@ import { signUpWithEmail } from "@/app/server/users"
 import { GoogleButton } from "@/components/auth/GoogleButton"
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function SignUpForm() {
+  const router = useRouter()
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -36,6 +38,8 @@ export function SignUpForm() {
         name: username, 
         password 
       })
+
+      router.push("/welcome")
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message)
