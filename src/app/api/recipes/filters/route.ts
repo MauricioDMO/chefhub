@@ -22,30 +22,29 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      success: true,
-      data: {
-        dishTypes: dishTypesResult.rows.map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          description: row.description || '',
-          icon: row.icon || '',
-          order: row.order || 1,
+      success: true,      data: {
+        dishTypes: dishTypesResult.rows.map((row: Record<string, unknown>) => ({
+          id: row.id as number,
+          name: row.name as string,
+          description: (row.description as string) || '',
+          icon: (row.icon as string) || '',
+          order: (row.order as number) || 1,
           active: true
         })),
-        prepTimeRanges: prepTimeRangesResult.rows.map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          minMinutes: row.minMinutes,
-          maxMinutes: row.maxMinutes,
-          description: row.description || '',
-          order: row.order || 1,
+        prepTimeRanges: prepTimeRangesResult.rows.map((row: Record<string, unknown>) => ({
+          id: row.id as number,
+          name: row.name as string,
+          minMinutes: row.minMinutes as number,
+          maxMinutes: row.maxMinutes as number,
+          description: (row.description as string) || '',
+          order: (row.order as number) || 1,
           active: true
         })),
-        countries: countriesResult.rows.map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          flag: row.flag || '',
-          code: row.code
+        countries: countriesResult.rows.map((row: Record<string, unknown>) => ({
+          id: row.id as number,
+          name: row.name as string,
+          flag: (row.flag as string) || '',
+          code: row.code as string
         }))
       }
     });

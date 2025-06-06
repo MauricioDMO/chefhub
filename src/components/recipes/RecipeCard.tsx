@@ -1,6 +1,7 @@
 import { Recipe, formatDuration, formatViews, getDifficultyText, getDifficultyColor } from '@/types/recipe';
 import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 import { FavoriteButton } from './FavoriteButton';
+import Image from 'next/image';
 
 // Función para formatear tiempo relativo en español
 function formatTimeAgo(date: string): string {
@@ -40,13 +41,13 @@ export function RecipeCard({ recipe, onClick, showFavoriteButton = true, isFavor
     <div 
       className="group cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1"
       onClick={onClick}
-    >
-      {/* Thumbnail */}
+    >      {/* Thumbnail */}
       <div className="relative aspect-video bg-gray-200 overflow-hidden">
-        <img
+        <Image
           src={recipe.thumbnailUrl}
           alt={recipe.title}
-          className="size-full object-cover group-hover:scale-105 transition-transform duration-200"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-200"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
           {/* Duration Badge */}
@@ -77,8 +78,8 @@ export function RecipeCard({ recipe, onClick, showFavoriteButton = true, isFavor
           {recipe.title}
         </h3>        {/* Chef Info */}
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
-            <img
+          <div className="w-8 h-8 rounded-full overflow-hidden relative">
+            <Image
               src={recipe.chef.avatar || '/default-avatar.png'}
               alt={recipe.chef.name}
               width={32}

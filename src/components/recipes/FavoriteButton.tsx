@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
@@ -23,16 +23,7 @@ export function FavoriteButton({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Check favorite status on mount if not explicitly set
-  useEffect(() => {
-    if (initialIsFavorite === undefined) {
-      checkFavoriteStatus();
-    } else {
-      setIsFavorite(initialIsFavorite);
-    }
-  }, [recipeId, initialIsFavorite]);
-
-  const checkFavoriteStatus = async () => {
+  const checkFavoriteStatus = useCallback(async () => {
     try {
       const response = await fetch(`/api/favorites/check?recipeId=${recipeId}`);
       if (response.ok) {
@@ -42,7 +33,15 @@ export function FavoriteButton({
     } catch (error) {
       console.error('Error checking favorite status:', error);
     }
-  };
+  }, [recipeId]);
+
+  // Check favorite status on mount if not explicitly set
+  useEffect(() => {
+    if (initialIsFavorite === undefined) {
+      checkFavoriteStatus();
+    } else {
+      setIsFavorite(initialIsFavorite);
+    }  }, [recipeId, initialIsFavorite, checkFavoriteStatus]);
 
   const sizeClasses = {
     sm: 'w-4 h-4',

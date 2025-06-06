@@ -32,18 +32,16 @@ export async function GET(
         ORDER BY ri."order", ri.id
       `,
       args: [recipeId]
-    });
-
-    const ingredients = result.rows.map((row: any) => ({
-      id: row.id,
-      quantity: row.quantity,
-      unit: row.unit,
-      notes: row.notes || undefined,
-      order: row.ingredient_order,
+    });    const ingredients = result.rows.map((row: Record<string, unknown>) => ({
+      id: row.id as number,
+      quantity: row.quantity as number,
+      unit: row.unit as string,
+      notes: (row.notes as string) || undefined,
+      order: row.ingredient_order as number,
       ingredient: {
-        id: row.ingredientId,
-        name: row.ingredientName,
-        commonUnit: row.commonUnit
+        id: row.ingredientId as number,
+        name: row.ingredientName as string,
+        commonUnit: row.commonUnit as string
       }
     }));
 

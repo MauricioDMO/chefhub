@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { IconCreditCard, IconLoader, IconExternalLink } from "@tabler/icons-react";
 
 interface SubscriptionTier {
@@ -16,7 +15,6 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ selectedTier }: CheckoutFormProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,10 +108,8 @@ export function CheckoutForm({ selectedTier }: CheckoutFormProps) {
               Continuar al Pago
             </>
           )}
-        </button>
-
-        <p className="text-xs text-gray-500 text-center mt-4">
-          Al hacer clic en "Continuar al Pago", serás redirigido a una página segura de Wompi 
+        </button>        <p className="text-xs text-gray-500 text-center mt-4">
+          Al hacer clic en &quot;Continuar al Pago&quot;, serás redirigido a una página segura de Wompi 
           para completar tu pago. Tu suscripción se activará automáticamente después del pago exitoso.
         </p>
       </div>

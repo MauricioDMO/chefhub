@@ -10,9 +10,8 @@ export function GoogleButton() {
   const [isLoading, setIsLoading] = useState(false)
 
   const { signIn } = authClient
-
   const handleSignIn = async () => {
-    const data = await signIn.social({
+    await signIn.social({
       provider: "google",
       callbackURL: "/",
       newUserCallbackURL: "/welcome"

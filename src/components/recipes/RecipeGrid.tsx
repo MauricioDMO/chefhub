@@ -14,7 +14,7 @@ interface RecipeGridProps {
 export function RecipeGrid({ recipes, dishTypes }: RecipeGridProps) {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [session, setSession] = useState(null) as [Record<string, any> | null, React.Dispatch<React.SetStateAction<Record<string, any> | null>>];
+  const [session, setSession] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {

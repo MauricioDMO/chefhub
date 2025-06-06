@@ -1,4 +1,3 @@
-import { GoogleButton } from '@/components/auth/GoogleButton';
 import { LogOutButton } from '@/components/auth/LogOutButton';
 import { IconHome, IconSearch, IconBookmark, IconHeart, IconCreditCard } from '@tabler/icons-react';
 import { MobileMenu } from '@/components/navigation/MobileMenu';

@@ -15,8 +15,7 @@ interface SubscriptionTier {
   adFree: boolean;
   premiumContent: boolean;
   downloadRecipes: boolean;
-  popular?: boolean;
-  icon: React.ComponentType<any>;
+  popular?: boolean;  icon: React.ComponentType<Record<string, unknown>>;
 }
 
 const subscriptionTiers: SubscriptionTier[] = [

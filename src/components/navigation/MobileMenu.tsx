@@ -1,10 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { IconMenu2, IconX, IconHome, IconSearch, IconBookmark, IconHeart } from '@tabler/icons-react'
-import { GoogleButton } from '@/components/auth/GoogleButton'
-import { LogOutButton } from '@/components/auth/LogOutButton'
-import Link from 'next/link'
+import { IconMenu2, IconX } from '@tabler/icons-react'
 
 export function MobileMenu({ children, menuOptions }: { children?: React.ReactNode, menuOptions: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

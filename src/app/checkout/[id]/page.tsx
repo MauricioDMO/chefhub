@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { IconShieldCheck, IconLock } from "@tabler/icons-react";
 
@@ -67,13 +68,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           </h1>
           <p className="text-gray-600 mb-6">
             No necesitas proporcionar información de pago para el plan gratuito.
-          </p>
-          <a 
+          </p>          <Link 
             href="/recipes"
             className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
           >
             Explorar Recetas
-          </a>
+          </Link>
         </div>
       </div>
     );

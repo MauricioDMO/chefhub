@@ -69,44 +69,44 @@ export async function GET(
         { success: false, error: 'Recipe not found' },
         { status: 404 }
       );
-    }
+    }    const row = result.rows[0] as Record<string, unknown>;
 
-    const row = result.rows[0] as any;    // Transform the result to match the Recipe interface
+    // Transform the result to match the Recipe interface
     const recipe: Recipe & { instructions?: string; chef: Recipe['chef'] & { bio?: string } } = {
-      id: row.id,
-      title: row.title,
-      description: row.description || '',
-      thumbnailUrl: row.thumbnailUrl || '',
-      videoUrl: row.videoUrl || undefined,
-      instructions: row.instructions || undefined,      chef: {
-        id: row.chefId,
-        name: row.chefName,
-        avatar: row.chefAvatar || '',
+      id: row.id as number,
+      title: row.title as string,
+      description: (row.description as string) || '',
+      thumbnailUrl: (row.thumbnailUrl as string) || '',
+      videoUrl: (row.videoUrl as string) || undefined,
+      instructions: (row.instructions as string) || undefined,
+      chef: {
+        id: row.chefId as number,
+        name: row.chefName as string,
+        avatar: (row.chefAvatar as string) || '',
         verified: Boolean(row.chefVerified),
-        bio: row.chefBio || undefined
+        bio: (row.chefBio as string) || undefined
       },
-      duration: row.duration || 0,
-      difficulty: (row.difficulty as 1 | 2 | 3) || 1,
-      viewCount: row.viewCount,
-      likeCount: row.likeCount,
-      dislikeCount: row.dislikeCount,
-      servings: row.servings || 1,
-      createdAt: row.createdAt,
+      duration: (row.duration as number) || 0,
+      difficulty: ((row.difficulty as number) as 1 | 2 | 3) || 1,
+      viewCount: row.viewCount as number,
+      likeCount: row.likeCount as number,
+      dislikeCount: row.dislikeCount as number,
+      servings: (row.servings as number) || 1,
+      createdAt: row.createdAt as string,
       dishType: {
-        id: row.dishTypeId || 0,
-        name: row.dishTypeName || '',
-        icon: row.dishTypeIcon || ''
-      },
-      prepTimeRange: {
-        id: row.prepTimeRangeId || 0,
-        name: row.prepTimeRangeName || '',
-        minMinutes: row.minMinutes || 0,
-        maxMinutes: row.maxMinutes
+        id: (row.dishTypeId as number) || 0,
+        name: (row.dishTypeName as string) || '',
+        icon: (row.dishTypeIcon as string) || ''
+      },      prepTimeRange: {
+        id: (row.prepTimeRangeId as number) || 0,
+        name: (row.prepTimeRangeName as string) || '',
+        minMinutes: (row.minMinutes as number) || 0,
+        maxMinutes: row.maxMinutes as number
       },
       country: row.countryId ? {
-        id: row.countryId,
-        name: row.countryName || '',
-        flag: row.countryFlag || ''
+        id: row.countryId as number,
+        name: (row.countryName as string) || '',
+        flag: (row.countryFlag as string) || ''
       } : undefined,
       published: Boolean(row.published),
       featured: Boolean(row.featured)

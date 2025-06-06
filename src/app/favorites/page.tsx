@@ -49,7 +49,7 @@ async function getUserFavoriteRecipes(userId: string): Promise<Recipe[]> {
         ORDER BY f.createdAt DESC
       `,
       args: [userId]
-    });return result.rows.map((row: any) => ({
+    });    return result.rows.map((row: Record<string, unknown>) => ({
       id: row.id as number,
       title: row.title as string,
       description: row.description as string,

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Event not processed" }, { status: 200 });
     }
 
-    const { identificadorEnlaceComercio, monto, fechaTransaccion, referencia } = webhookData.datos;
+    const { identificadorEnlaceComercio, referencia } = webhookData.datos;
     const { userId, tierId } = webhookData.datos.datosAdicionales;
 
     // Find the pending payment transaction

@@ -77,7 +77,8 @@ export async function GET(request: NextRequest) {
     });
 
     const total = countResult.rows[0]?.total as number || 0;
-    const totalPages = Math.ceil(total / limit);    const recipes = result.rows.map((row: any) => ({
+    const totalPages = Math.ceil(total / limit);
+    const recipes = result.rows.map((row) => ({
       id: row.id as number,
       title: row.title as string,
       description: row.description as string,

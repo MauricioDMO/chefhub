@@ -18,11 +18,9 @@ export async function GET(request: NextRequest) {
     const difficulty = searchParams.get('difficulty');
     const featured = searchParams.get('featured');
     const search = searchParams.get('search');
-    const userId = searchParams.get('userId'); // Para obtener favoritos del usuario
-
-    // Build WHERE conditions and parameters
-    let whereConditions = ['r.published = 1'];
-    let params: any[] = [];
+    const userId = searchParams.get('userId'); // Para obtener favoritos del usuario    // Build WHERE conditions and parameters
+    const whereConditions = ['r.published = 1'];
+    const params: (string | number | boolean)[] = [];
     let paramIndex = 1;
 
     if (dishTypeId) {
@@ -112,52 +110,47 @@ export async function GET(request: NextRequest) {
       ${whereClause}
       ORDER BY r.createdAt DESC
       LIMIT ? OFFSET ?
-    `;
-
-    // Build query parameters: WHERE params + userId (if exists) + limit + offset
-    const queryParams = [...params];
+    `;    // Build query parameters: WHERE params + userId (if exists) + limit + offset
+    const queryParams: (string | number | boolean)[] = [...params];
     if (userId) {
       queryParams.push(userId);
     }
     queryParams.push(limit, offset);
     
-    const result = await client.execute({ sql: query, args: queryParams });
-
-    // Transform the results to match the Recipe interface
-    const recipes: Recipe[] = result.rows.map((row: any) => ({
-      id: row.id,
-      title: row.title,
-      description: row.description || '',
-      thumbnailUrl: row.thumbnailUrl || '',
-      videoUrl: row.videoUrl || undefined,
+    const result = await client.execute({ sql: query, args: queryParams });    // Transform the results to match the Recipe interface
+    const recipes: Recipe[] = result.rows.map((row: Record<string, unknown>) => ({
+      id: row.id as number,
+      title: row.title as string,
+      description: (row.description as string) || '',
+      thumbnailUrl: (row.thumbnailUrl as string) || '',
+      videoUrl: (row.videoUrl as string) || undefined,
       chef: {
-        id: row.chefId,
-        name: row.chefName,
-        avatar: row.chefAvatar || '',
+        id: row.chefId as number,
+        name: row.chefName as string,
+        avatar: (row.chefAvatar as string) || '',
         verified: Boolean(row.chefVerified)
       },
-      duration: row.duration || 0,
-      difficulty: (row.difficulty as 1 | 2 | 3) || 1,
-      viewCount: row.viewCount,
-      likeCount: row.likeCount,
-      dislikeCount: row.dislikeCount,      servings: row.servings || 1,
-      createdAt: row.createdAt,
+      duration: (row.duration as number) || 0,
+      difficulty: ((row.difficulty as number) as 1 | 2 | 3) || 1,
+      viewCount: row.viewCount as number,
+      likeCount: row.likeCount as number,
+      dislikeCount: row.dislikeCount as number,
+      servings: (row.servings as number) || 1,      createdAt: row.createdAt as string,
       isFavorite: Boolean(row.isFavorite), // Agregar esta propiedad
       dishType: {
-        id: row.dishTypeId || 0,
-        name: row.dishTypeName || '',
-        icon: row.dishTypeIcon || ''
-      },
-      prepTimeRange: {
-        id: row.prepTimeRangeId || 0,
-        name: row.prepTimeRangeName || '',
-        minMinutes: row.minMinutes || 0,
-        maxMinutes: row.maxMinutes
+        id: (row.dishTypeId as number) || 0,
+        name: (row.dishTypeName as string) || '',
+        icon: (row.dishTypeIcon as string) || ''
+      },      prepTimeRange: {
+        id: (row.prepTimeRangeId as number) || 0,
+        name: (row.prepTimeRangeName as string) || '',
+        minMinutes: (row.minMinutes as number) || 0,
+        maxMinutes: row.maxMinutes as number
       },
       country: row.countryId ? {
-        id: row.countryId,
-        name: row.countryName || '',
-        flag: row.countryFlag || ''
+        id: row.countryId as number,
+        name: (row.countryName as string) || '',
+        flag: (row.countryFlag as string) || ''
       } : undefined,
       published: Boolean(row.published),
       featured: Boolean(row.featured)
