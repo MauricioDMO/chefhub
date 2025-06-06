@@ -10,11 +10,11 @@ interface WompiWebhookData {
     moneda: string;
     fechaTransaccion: string;
     referencia: string;
-    metodoPago: string;
-    datosAdicionales: {
+    metodoPago: string;    datosAdicionales: {
       userId: string;
       tierId: string;
-      subscriptionType: string;
+      tierName: string;
+      linkIdentifier: string;
     };
   };
 }
@@ -53,65 +53,49 @@ export async function POST(request: NextRequest) {
     if (tierResult.rows.length === 0) {
       console.error("Subscription tier not found:", tierId);
       return NextResponse.json({ error: "Tier not found" }, { status: 404 });
-    }
-
-    const now = new Date().toISOString();
-    const startDate = new Date().toISOString().split('T')[0];
+    }    const now = new Date().toISOString();
 
     try {
-      // Create the subscription
-      const subscriptionResult = await client.execute(
-        `INSERT INTO subscriptions 
-          (userId, tierId, status, startDate, autoRenew, createdAt, updatedAt)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          userId,
-          parseInt(tierId),
-          "active",
-          startDate,
-          1, // autoRenew
-          now,
-          now,
-        ]
+      const transaction = pendingTransaction.rows[0];
+      const subscriptionId = transaction.subscriptionId;
+
+      // Update the existing subscription status to active
+      await client.execute(
+        `UPDATE subscriptions 
+         SET status = 'active', updatedAt = ?
+         WHERE id = ?`,
+        [now, subscriptionId]
       );
 
-      const subscriptionId = subscriptionResult.lastInsertRowid;
-
-      if (!subscriptionId) {
-        throw new Error("Error creating subscription");
-      }
-
-      // Update the payment transaction with subscription info and success status
+      // Update the payment transaction with success status
       await client.execute(
         `UPDATE payment_transactions 
-         SET subscriptionId = ?, status = 'approved', wompiReference = ?, updatedAt = ?
+         SET status = 'approved', wompiReference = ?, processedAt = ?
          WHERE wompiLinkId = ?`,
         [
-          Number(subscriptionId),
           referencia,
           now,
           identificadorEnlaceComercio
         ]
       );
 
-      console.log(`Subscription created successfully for user ${userId}, tier ${tierId}`);
+      console.log(`Subscription activated successfully for user ${userId}, subscription ${subscriptionId}`);
       
       return NextResponse.json({ 
-        message: "Subscription created successfully",
+        message: "Subscription activated successfully",
         subscriptionId: Number(subscriptionId)
       }, { status: 200 });
 
     } catch (dbError) {
-      console.error("Database error creating subscription:", dbError);
+      console.error("Database error activating subscription:", dbError);
       
       // Mark the transaction as failed
       await client.execute(
         `UPDATE payment_transactions 
-         SET status = 'failed', errorMessage = ?, updatedAt = ?
+         SET status = 'error', failureReason = ?
          WHERE wompiLinkId = ?`,
         [
-          "Database error during subscription creation",
-          now,
+          "Database error during subscription activation",
           identificadorEnlaceComercio
         ]
       );

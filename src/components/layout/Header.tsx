@@ -1,13 +1,14 @@
 import { GoogleButton } from '@/components/auth/GoogleButton';
 import { LogOutButton } from '@/components/auth/LogOutButton';
-import { IconHome, IconSearch, IconBookmark, IconHeart } from '@tabler/icons-react';
+import { IconHome, IconSearch, IconBookmark, IconHeart, IconCreditCard } from '@tabler/icons-react';
 import { MobileMenu } from '@/components/navigation/MobileMenu';
 import Link from 'next/link';
 import { SignInButton } from '@/components/auth/SignInButton';
 import { getSessionWithChefStatus } from '@/lib/auth-helpers';
 
 async function MenuOptions() {
-  const { session, isChef } = await getSessionWithChefStatus();  const options = [
+  const { session, isChef } = await getSessionWithChefStatus()
+  const options = [
     {
       label: 'Inicio',
       href: '/',
@@ -19,6 +20,13 @@ async function MenuOptions() {
       label: 'Explorar',
       href: '/recipes',
       icon: IconSearch,
+      authRequired: false,
+      chefRequired: false
+    },
+    {
+      label: 'Precios',
+      href: '/pricing',
+      icon: IconCreditCard,
       authRequired: false,
       chefRequired: false
     },

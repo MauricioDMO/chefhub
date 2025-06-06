@@ -103,20 +103,24 @@ async function handleCreatePaymentLink(
         emailsNotificacion: "",
         urlWebhook: `${NEXT_PUBLIC_BASE_URL}/api/webhook/wompi`,
         notificarTransaccionCliente: true
-      },
-      vigencia: {
+      },      vigencia: {
         fechaInicio: now.toISOString(),
         fechaFin: expiryDate.toISOString()
       },
       limitesDeUso: {
         cantidadMaximaPagosExitosos: 1,
         cantidadMaximaPagosFallidos: 3
+      },
+      datosAdicionales: {
+        userId: userId,
+        tierId: tierId.toString(),
+        tierName: tierName,
+        linkIdentifier: linkIdentifier
       }
     }
 
     // Get Wompi token and create payment link
     const token = await getWompiToken()
-
     
     const response = await fetch(WOMPI_ENDPOINTS.CREATE_PAYMENT_LINK, {
       method: "POST",
@@ -127,8 +131,6 @@ async function handleCreatePaymentLink(
       body: JSON.stringify(paymentLinkData),
     })
 
-    console.log(await response.json())
-
     if (!response.ok) {
       const errorData = await response.text()
       console.error("Wompi payment link error:", errorData)
@@ -136,11 +138,32 @@ async function handleCreatePaymentLink(
     }
 
     const result = await response.json()
-    
-    if (!result.success || !result.data?.urlPago) {
+
+    // Check if the response has the expected structure
+    if (!result.urlEnlace && !result.urlEnlaceLargo) {
       console.error("Wompi payment link failed:", result)
       throw new Error("Error al crear el enlace de pago")
-    }
+    }    // Create a pending subscription first to satisfy the NOT NULL constraint
+    const startDate = new Date().toISOString()
+    const endDate = new Date(new Date().getFullYear() + 1, new Date().getMonth(), new Date().getDate()).toISOString() // 1 year from now
+    
+    const subscriptionResult = await client.execute(
+      `INSERT INTO subscriptions 
+        (userId, tierId, status, startDate, endDate, autoRenew, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        tierId,
+        "expired", // Temporary status, will be updated to 'active' after successful payment
+        startDate,
+        endDate,
+        1,
+        startDate,
+        startDate,
+      ]
+    )
+
+    const subscriptionId = subscriptionResult.lastInsertRowid as bigint
 
     // Store pending subscription info for webhook processing
     const now_iso = new Date().toISOString()
@@ -150,7 +173,7 @@ async function handleCreatePaymentLink(
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         userId,
-        null, // Will be filled when subscription is created after payment
+        subscriptionId,
         tierPrice,
         "USD",
         "pending",
@@ -160,11 +183,18 @@ async function handleCreatePaymentLink(
       ]
     )
 
+    // Use the preferred URL (urlEnlaceLargo is typically more reliable)
+    const paymentUrl = result.urlEnlaceLargo || result.urlEnlace
+
     return NextResponse.json({
       success: true,
-      paymentUrl: result.data.urlPago,
+      paymentUrl: paymentUrl,
       linkIdentifier: linkIdentifier,
-      expiresAt: expiryDate.toISOString()
+      expiresAt: expiryDate.toISOString(),
+      // Additional info from Wompi response
+      wompiLinkId: result.idEnlace,
+      qrCodeUrl: result.urlQrCodeEnlace,
+      isProduction: result.estaProductivo
     })
 
   } catch (error) {
